@@ -1,0 +1,19 @@
+name: build-windows
+on: [workflow_dispatch, push]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm install
+      - run: npx tauri icon app-icon.png
+      - run: npx tauri build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VinylMini
+          path: |
+            src-tauri/target/release/vinylmini.exe
+            src-tauri/target/release/bundle/nsis/*.exe

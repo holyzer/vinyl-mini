@@ -1,0 +1,13 @@
+# 构建产物
+node_modules/
+src-tauri/target/
+src-tauri/gen/
+
+# 本地测试资产（大文件/生成物，不入库）
+test-music/
+out/
+.v2c/
+
+# 系统杂物
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Vinyl Mini</title>
+<style>
+*{box-sizing:border-box;user-select:none}
+html,body{margin:0;height:100%;background:transparent;font-family:"Segoe UI",system-ui,sans-serif;color:#3a3a3a;overflow:hidden}
+.body{margin:0;width:100%;height:100%;border-radius:32px;background:linear-gradient(160deg,#fff,#f3f2ef);position:relative;
+ box-shadow:inset 0 2px 0 #fff;display:flex;flex-direction:column;align-items:center;padding:20px 18px 18px}
+.top{width:100%;display:flex;justify-content:space-between}
+.mini{width:30px;height:30px;border-radius:50%;border:0;background:#f4f3f0;cursor:pointer;color:#777;box-shadow:0 2px 4px rgba(0,0,0,.18),inset 0 1px 0 #fff;display:grid;place-items:center}
+.mini:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.2)}.mini.on{color:#e0574f}
+.mini:hover{color:#444}.mini.x:hover{color:#e0574f;background:#fbeeec}
+.disc{cursor:pointer}
+.deck{margin-top:8px;width:216px;height:216px;border-radius:26px;background:#f7f6f3;display:grid;place-items:center;box-shadow:inset 0 3px 8px rgba(0,0,0,.12),0 1px 0 #fff}
+.disc{width:184px;height:184px;border-radius:50%;animation:spin 3.2s linear infinite;animation-play-state:paused;
+ background:repeating-radial-gradient(circle,#1b1b1d 0 2px,#262629 3px 4px);box-shadow:0 6px 14px rgba(0,0,0,.35);position:relative}
+.disc::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 20deg,transparent 0 20%,rgba(255,255,255,.13) 25%,transparent 32% 70%,rgba(255,255,255,.1) 75%,transparent 82%)}
+.disc::after{content:"";position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px;border-radius:50%;background:radial-gradient(circle,#333 0 4px,#f2f0ec 5px);border:3px solid #e6a04a}
+.disc.play{animation-play-state:running}
+@keyframes spin{to{transform:rotate(360deg)}}
+#title{margin:18px 0 6px;width:100%;text-align:center;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:20px}
+.row{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:12px}
+.key{border:0;cursor:pointer;border-radius:50%;background:linear-gradient(#fff,#ecebe8);color:#555;display:grid;place-items:center;box-shadow:0 4px 8px rgba(0,0,0,.2),0 1px 0 #fff inset;transition:.08s}
+.key:active{transform:translateY(2px);box-shadow:0 1px 3px rgba(0,0,0,.25) inset}
+.key.s{width:48px;height:48px}.key.b{width:64px;height:64px;background:linear-gradient(#f0a852,#e0903a);color:#fff}
+.key.on{color:#e0574f}.key.dis.on{color:#222}
+svg{width:22px;height:22px;fill:currentColor}.b svg{width:28px;height:28px}
+#panel{display:none;position:absolute;left:14px;right:14px;top:56px;background:#fff;border-radius:18px;padding:10px;z-index:5;box-shadow:0 8px 24px rgba(0,0,0,.22);font-size:12px}
+#panel.open{display:block}
+.f{display:flex;align-items:center;gap:6px;padding:5px 4px}.f span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.f button,#add{border:0;background:#f1efeb;border-radius:10px;cursor:pointer;padding:4px 9px;color:#555}
+#add{width:100%;margin-top:6px;padding:7px}
+</style></head><body>
+<div class="body">
+ <div class="top" data-tauri-drag-region>
+  <button class="mini" id="pin" title="置顶"><svg viewBox="0 0 24 24"><path d="M14 3l7 7-2 1-3-1-4 4v5l-2 2-3-6-5-3 2-2h5l4-4-1-3z"/></svg></button>
+  <div style="display:flex;gap:8px">
+   <button class="mini" id="min" title="最小化"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round"><path d="M5 12h14"/></svg></button>
+   <button class="mini x" id="close" title="关闭"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+ </div>
+ <div id="panel"><div id="flist"></div><button id="add">＋ 添加文件夹</button></div>
+ <div class="deck"><div class="disc" id="disc"></div></div>
+ <div id="title">请选择音乐文件夹</div>
+ <div class="row">
+  <button class="key s" id="prev"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg></button>
+  <button class="key b" id="pp"><svg viewBox="0 0 24 24" id="ppi"><path d="M8 5v14l11-7z"/></svg></button>
+  <button class="key s" id="next"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg></button>
+ </div>
+ <div class="row" style="gap:40px;margin-top:20px">
+  <button class="key s dis" id="dis" title="讨厌"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM8.5 9a1.3 1.3 0 110 2.6 1.3 1.3 0 010-2.6zm7 0a1.3 1.3 0 110 2.6 1.3 1.3 0 010-2.6zM12 14c2 0 3.6 1 4.4 2.4l-1.2.7C14.7 16.3 13.5 16 12 16s-2.7.3-3.2 1.1l-1.2-.7C8.4 15 10 14 12 14z"/></svg></button>
+  <button class="key s" id="like" title="喜欢"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.800-8 11-8 11z"/></svg></button>
+ </div>
+</div>
+<audio id="au"></audio>
+<script>
+const T=window.__TAURI__, inv=(c,a)=>T.core.invoke(c,a), $=id=>document.getElementById(id), au=$('au');
+const PLAY='<path d="M8 5v14l11-7z"/>', PAUSE='<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>';
+const W_LIKE=4,W_NORMAL=1,W_DISLIKE=0.25,BLACKLIST_AT=3;
+let st={folders:[],marks:{}}, lib=[], cur=null, hist=[], fails=0;
+const rec=p=>st.marks[p]||(st.marks[p]={s:0,d:0,n:0,b:false});
+const weight=p=>{const r=st.marks[p]||{};return r.b?0:r.s===1?W_LIKE:r.s===-1?W_DISLIKE:W_NORMAL};
+const save=()=>inv('save_state',{json:JSON.stringify(st)});
+const base=p=>p.split(/[\\/]/).filter(Boolean).pop()||p;
+
+function pick(){
+  let pool=lib.filter(p=>weight(p)>0&&(lib.length<2||p!==cur));
+  if(!pool.length)pool=lib.filter(p=>weight(p)>0);
+  if(!pool.length)return null;
+  let r=Math.random()*pool.reduce((a,p)=>a+weight(p),0);
+  for(const p of pool){r-=weight(p);if(r<=0)return p}
+  return pool[pool.length-1];
+}
+async function play(p){
+  if(!p){$('title').textContent='没有可播放的歌曲';au.pause();cur=null;refresh();return}
+  cur=p;rec(p).n++;save();
+  au.src=T.core.convertFileSrc(p);au.play().catch(()=>{});
+  $('title').textContent=await inv('meta',{path:p});refresh();
+}
+function next(){if(cur)hist.push(cur);play(pick())}
+function prev(){
+  while(hist.length){const p=hist.pop();if(weight(p)>0){play(p);return}}
+  if(cur)au.currentTime=0;
+}
+function refresh(){
+  const r=cur?rec(cur):{s:0};
+  $('like').classList.toggle('on',r.s===1);$('dis').classList.toggle('on',r.s===-1);
+  const pl=!au.paused&&!au.ended;
+  $('disc').classList.toggle('play',pl);$('ppi').innerHTML=pl?PAUSE:PLAY;
+}
+function renderFolders(){
+  $('flist').innerHTML='';
+  st.folders.forEach((f,i)=>{
+    const d=document.createElement('div');d.className='f';
+    d.innerHTML='<span></span><button>✕</button>';
+    d.firstChild.textContent=base(f);d.title=f;
+    d.lastChild.onclick=()=>removeFolder(i);
+    $('flist').appendChild(d);
+  });
+}
+async function rescan(startIfIdle){
+  lib=await inv('scan',{folders:st.folders});hist=hist.filter(p=>lib.includes(p));
+  if(!lib.length){cur=null;au.pause();$('title').textContent=st.folders.length?'文件夹中没有支持的音频':'请选择音乐文件夹';refresh();return}
+  if(startIfIdle&&!cur)play(pick());
+  else if(cur&&!lib.includes(cur))next();
+}
+async function addFolder(){
+  const f=await T.dialog.open({directory:true});
+  if(!f||st.folders.includes(f))return;
+  st.folders.push(f);save();renderFolders();await rescan(true);
+}
+async function removeFolder(i){st.folders.splice(i,1);save();renderFolders();await rescan(false)}
+$('disc').onclick=()=>{
+  if(!st.folders.length){addFolder();return}
+  $('panel').classList.toggle('open');
+};
+$('min').onclick=()=>T.window.getCurrentWindow().minimize();
+$('close').onclick=()=>T.window.getCurrentWindow().close();
+$('add').onclick=addFolder;
+$('pp').onclick=()=>{if(cur)au.paused?au.play():au.pause()};
+$('next').onclick=()=>{if(cur)next()};
+$('prev').onclick=()=>{if(cur)prev()};
+$('like').onclick=()=>{if(!cur)return;const r=rec(cur);r.s=r.s===1?0:1;save();refresh()};
+$('dis').onclick=()=>{
+  if(!cur)return;const r=rec(cur);
+  r.s=-1;r.d++;
+  if(r.d>=BLACKLIST_AT){r.b=true;save();next();return}
+  save();next();
+};
+let pinned=false;
+$('pin').onclick=async()=>{pinned=!pinned;await T.window.getCurrentWindow().setAlwaysOnTop(pinned);$('pin').classList.toggle('on',pinned)};
+au.onplay=au.onpause=refresh;
+au.onended=()=>{fails=0;next()};
+au.onerror=()=>{if(++fails<20)next();else $('title').textContent='无法播放这些文件'};
+au.onplaying=()=>{fails=0};
+(async()=>{
+  try{const s=JSON.parse(await inv('load_state'));if(s&&s.folders)st={folders:s.folders,marks:s.marks||{}}}catch{}
+  renderFolders();
+  if(st.folders.length)await rescan(true);else addFolder();
+})();
+</script></body></html>

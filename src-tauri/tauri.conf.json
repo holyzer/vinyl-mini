@@ -1,0 +1,17 @@
+{
+  "productName": "VinylMini",
+  "version": "1.0.0",
+  "identifier": "local.vinyl.mini",
+  "build": { "frontendDist": "../dist" },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [{
+      "title": "Vinyl Mini", "width": 340, "height": 500,
+      "resizable": false, "maximizable": false,
+      "decorations": false, "transparent": true, "shadow": false,
+      "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required"
+    }],
+    "security": { "csp": null, "assetProtocol": { "enable": true, "scope": ["**"] } }
+  },
+  "bundle": { "active": true, "targets": ["nsis"], "icon": ["icons/icon.ico"] }
+}
