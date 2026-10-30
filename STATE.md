@@ -9,4 +9,5 @@
 - 已知瑕疵（不影响使用）：GNU 链接器警告 `.rsrc merge failure: multiple non-default manifests`（图标/DPI 实测正常）
 - 下一步（可选）：项目尚未 git init；如走 GitHub Actions 构建路径，先 git init + 推送（.gitignore 需含 src-tauri/target、node_modules）
 - 代码作者（用户告知，2026-10-30）：**Claude Sonnet 5.5**（原 Linux 沙箱会话产出）。后续手改保持其风格：极限精简、零注释、en-dash 排版
-- 最近更新：2026-10-30（收尾：补记代码作者归属；三轮迭代后无新改动，AI-Common 无待提交沉淀）
+- GitHub 构建通道（2026-10-30 开通）：公开仓库 https://github.com/holyzer/vinyl-mini ，首次 CI 构建 5m42s 成功，工件 `VinylMini`（3.9MB zip，含 exe+NSIS 安装包，保留至 2027-01-28）。本地已 git init（main，首提交 f106bc1）；以后 push 即自动构建。下载：仓库页 Actions → 对应 run → Artifacts
+- 最近更新：2026-10-30（收尾：补记代码作者归属；开通 GitHub Actions 构建通道）
